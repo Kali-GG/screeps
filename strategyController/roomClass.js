@@ -1,10 +1,11 @@
 var screepsapi = require('./screepsapi');
 
+// comment from pc
+
 module.exports = class room {
 
     constructor(roomName, empire) {
         this.name = roomName;
-
         this. status = 'updating';
         this.terrainUpdate(empire);
 
