@@ -1,25 +1,28 @@
 
 
-
-
-
-
 module.exports = class dbController {
-    constructor() {
+    constructor(db) {
+        this.db = db;
+    }
 
-
-
+    test() {
         /*
-        this.dbo =  MongoClient.connect(url);
-
-        this.status =  this.dbo.then(function(){
-           return true;
-        });
-        */
-
+        this.db.collection("0_empire").find({}).toArray(function (err, result) {
+            if (err) throw err;
+            console.log(result);
+            db.close();
+        });*/
     }
 
 };
+
+/*
+this.dbo =  MongoClient.connect(url);
+
+this.status =  this.dbo.then(function(){
+   return true;
+});
+*/
 
 
 /* //insert

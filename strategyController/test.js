@@ -32,16 +32,35 @@ let empires = {};
 
 var MongoClient = require('../screepsServer/node_modules/mongodb').MongoClient;
 var empireController = require('./empireController');
+var db;
 
 MongoClient.connect("mongodb://localhost:27017/screeps_db", function(err, database) {
-    if(err) throw err;
 
-    console.log("DB up and running");
+    db = database;
 
-    shards.forEach(key => {
-        empires[key] = new empireController(key, database);
-    });
+    try {
+        db.collection("0_empire").insertMany(myobj, function(err, res) {
+            if (err) throw err;
+            console.log(res.insertedCount + " document(s) inserted");
+            console.log(res);
+            db.close();
+        });
+    }
+    catch (damn) {
+        console.log(damn);
+    }
 
+    if(err) {
+        //throw err;
+        console.log('Error while connecting to db: ' + err);
+    }
+    else {
+        console.log("DB up and running");
+
+        shards.forEach(key => {
+            empires[key] = new empireController(key, database);
+        });
+    }
 });
 
 

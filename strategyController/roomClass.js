@@ -1,7 +1,5 @@
 var screepsapi = require('./screepsapi');
 
-// comment from pc
-
 module.exports = class room {
 
     constructor(roomName, empire) {
