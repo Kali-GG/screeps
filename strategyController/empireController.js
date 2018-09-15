@@ -1,11 +1,12 @@
 var screepsapi = require('./screepsapi');
 var orderClass = require('./orderClass');
+var dbClass = require('./dbController');
 
 module.exports= class empireController{
 
     constructor(shard, database) {
 
-        this.db = database;
+        this.db = new dbClass(database);
         this.shard = shard;
         this.tickIsRunning = false;
         this.status = 'unknown';
@@ -16,6 +17,7 @@ module.exports= class empireController{
         this.rooms = {};
 
         this.run();
+        this.db.test();
     }
 
     async run() {
