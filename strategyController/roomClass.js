@@ -2,19 +2,31 @@ var screepsapi = require('./screepsapi');
 
 module.exports = class room {
 
-    constructor(roomName, empire) {
+    constructor(roomName, empire, roomData) {
         this.name = roomName;
-        this. status = 'updating';
-        this.terrainUpdate(empire);
+        this.shard = empire.shard;
+
+        if (roomData) {
+            this.terrain = roomData.terrain;
+            this.status = roomData.status;
+            this._id = roomData._id;
+        } else {
+            this. status = 'updating';
+            this.terrainUpdate();
+        }
 
         //console.log(empire.logEntry() + 'this.terrain' + this.terrain);
     }
 
-    async terrainUpdate(empire) {
+    async save() {
+        db.insert('rooms', this.shard, {name: this.name, _id: this._id, terrain: this.terrain, status: this.status});
+    }
+
+    async terrainUpdate() {
         /*
         let apiRes = await screepsapi({
             type: 'room-terrain',
-            shard: empire.shard,
+            shard: this.shard,
             room: this.name,
             encoded: true
         });
@@ -25,6 +37,7 @@ module.exports = class room {
         if(apiRes.terrain) {
             this.terrain = apiRes.terrain;
             this.status = 'complete';
+            //this.save();
         }
         else {
             this.status = 'incomplete';

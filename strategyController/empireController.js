@@ -1,12 +1,10 @@
 var screepsapi = require('./screepsapi');
 var orderClass = require('./orderClass');
-var dbClass = require('./dbController');
+var roomClass = require('./roomClass');
 
 module.exports= class empireController{
 
-    constructor(shard, database) {
-
-        this.db = new dbClass(database);
+    constructor(shard) {
         this.shard = shard;
         this.tickIsRunning = false;
         this.status = 'unknown';
@@ -17,10 +15,17 @@ module.exports= class empireController{
         this.rooms = {};
 
         this.run();
-        this.db.test();
     }
 
     async run() {
+        (await db.find('rooms', this.shard)).forEach(key => {
+            if(key.name){
+                this.rooms[key.name] = new roomClass(key.name, this, key);
+                console.log(this.logEntry() + JSON.stringify(this.rooms[key.name]));
+            }
+        });
+        //do same for orders
+
         while (this.iteration < 3) { //get rid of this condition // come up with a useful condition
             this.tick();
             await this.sleep(1000);

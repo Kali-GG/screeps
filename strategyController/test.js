@@ -1,67 +1,41 @@
-/*var test = require('./screepsapi');
+var MongoClient = require('../screepsServer/node_modules/mongodb').MongoClient;
 
-console.log(test({
-    type: 'room-terrain',
-    room: 'W67S26',
-    shard: 'shard0',
-    segment: '0',
-    encoded: false,
-    ptr: false,
-    data: {
-        segment: '0',
-        data: 'neu1'
-    }
-}));*/
-
-let x = {
-    type: 'room-terrain',
-    room: 'W67S26',
-    shard: 'shard0',
-    segment: '0',
-    encoded: false,
-    ptr: false,
-    data: {
-        segment: '0',
-        data: 'neu1'
-    }
-};
-//console.log(JSON.stringify(x));
+const url = 'mongodb://localhost:27017';
+const dbName = 'screeps_db';
 
 let shards = [0,1];
 let empires = {};
 
-var MongoClient = require('../screepsServer/node_modules/mongodb').MongoClient;
 var empireController = require('./empireController');
-var db;
+var dbClass = require('./dbController');
 
-MongoClient.connect("mongodb://localhost:27017/screeps_db", function(err, database) {
+startEmpireController();
 
-    db = database;
+async function startEmpireController() {
+    MongoClient.connect(url, function(err, client) {
 
-    try {
-        db.collection("0_empire").insertMany(myobj, function(err, res) {
-            if (err) throw err;
-            console.log(res.insertedCount + " document(s) inserted");
-            console.log(res);
-            db.close();
-        });
-    }
-    catch (damn) {
-        console.log(damn);
-    }
+        if (err) {
+            console.log('err while connecting to db');
+        }
+        else {
+            console.log("Connected successfully to server");
 
-    if(err) {
-        //throw err;
-        console.log('Error while connecting to db: ' + err);
-    }
-    else {
-        console.log("DB up and running");
+            global.db = new dbClass (client.db(dbName));
+            shards.forEach(key => {
+                empires[key] = new empireController(key);
+            });
 
-        shards.forEach(key => {
-            empires[key] = new empireController(key, database);
-        });
-    }
-});
+            db.db.on('close', function () {
+                startEmpireController();
+            });
+        }
+    });
+}
+
+
+
+
+
 
 
 

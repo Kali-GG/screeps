@@ -1,4 +1,4 @@
-var room = require('./roomClass');
+var roomClass = require('./roomClass');
 
 class order {
     constructor(data) {
@@ -44,7 +44,7 @@ class statusReport extends order {
                 }
                 else {
                     console.log(empire.logEntry() + roomName + ' not in empire.rooms');
-                    empire.rooms[roomName] = new room(roomName, empire);
+                    empire.rooms[roomName] = new roomClass(roomName, empire);
                 }
             });
         }
